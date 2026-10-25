@@ -1,0 +1,17 @@
+.env
+*.env
+!.env.example
+logs/
+__pycache__/
+*.pyc
+.venv/
+*.key
+*.pem
+*.jsonl
+node_modules/
+dist/
+health.json
+_req.json
+_task.json
+gen-acs.json
+data/*.db

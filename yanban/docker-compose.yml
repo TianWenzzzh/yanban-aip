@@ -1,0 +1,126 @@
+# 研伴系统一键部署：网关 + 5 Partner + Leader
+# build context 统一为 D:/code（../，含 acps-sdk 源码）
+# 用法：cd D:/code/yanban && docker compose up -d   （GLM_API_KEY 从同目录 .env 读取）
+# 验证：curl http://localhost:8041/health
+
+x-glm-env: &glm_env
+  GLM_API_KEY: ${GLM_API_KEY}
+  GLM_BASE_URL: https://open.bigmodel.cn/api/paas/v4
+  GLM_MODEL: glm-4-flash
+  AMP_LOG_DIR: /app/logs
+
+x-partner-build: &partner_build
+  context: ..
+  dockerfile: yanban/Dockerfile.partner
+  args:
+    APP_DIR: yanban
+
+services:
+  mcp-gateway:
+    image: yanban-mcp-gateway
+    build:
+      <<: *partner_build
+      args:
+        APP_DIR: mcp-aip-gateway
+    environment:
+      <<: *glm_env
+      GATEWAY_CONFIG: /app/gateway/config.container.toml
+      UV_DEFAULT_INDEX: https://mirrors.aliyun.com/pypi/simple/
+      WANBRIDGE_A2A_URL: http://localhost:8021/
+      WANBRIDGE_EMBEDDING_API_KEY: ${GLM_API_KEY}
+    volumes:
+      - shared-logs:/app/logs
+      - ../yanban:/repos/yanban
+    ports:
+      - "8021:8021"
+    # v5(T3)：双面同进程——/rpc 说 AIP（梧桐/Leader 兼容不变），/ + well-known 说 A2A（流式/任务接口/检索）
+    command: ["--factory", "gateway.app:create_app", "--host", "0.0.0.0", "--port", "8021"]
+    restart: unless-stopped
+
+  literature:
+    image: yanban-literature
+    build: *partner_build
+    environment:
+      <<: *glm_env
+    volumes:
+      - shared-logs:/app/logs
+    ports:
+      - "8031:8031"
+    command: ["literature_partner:app", "--host", "0.0.0.0", "--port", "8031"]
+    restart: unless-stopped
+
+  experiment:
+    image: yanban-experiment
+    build: *partner_build
+    environment:
+      <<: *glm_env
+    volumes:
+      - shared-logs:/app/logs
+    ports:
+      - "8032:8032"
+    command: ["partner_experiment:app", "--host", "0.0.0.0", "--port", "8032"]
+    restart: unless-stopped
+
+  analysis:
+    image: yanban-analysis
+    build: *partner_build
+    environment:
+      <<: *glm_env
+    volumes:
+      - shared-logs:/app/logs
+    ports:
+      - "8033:8033"
+    command: ["partner_analysis:app", "--host", "0.0.0.0", "--port", "8033"]
+    restart: unless-stopped
+
+  writing:
+    image: yanban-writing
+    build: *partner_build
+    environment:
+      <<: *glm_env
+    volumes:
+      - shared-logs:/app/logs
+    ports:
+      - "8034:8034"
+    command: ["partner_writing:app", "--host", "0.0.0.0", "--port", "8034"]
+    restart: unless-stopped
+
+  review:
+    image: yanban-review
+    build: *partner_build
+    environment:
+      <<: *glm_env
+    volumes:
+      - shared-logs:/app/logs
+    ports:
+      - "8035:8035"
+    command: ["partner_review:app", "--host", "0.0.0.0", "--port", "8035"]
+    restart: unless-stopped
+
+  leader:
+    image: yanban-leader
+    build: *partner_build
+    environment:
+      <<: *glm_env
+      YANBAN_NET: compose
+      YANBAN_REVIEW_ENDPOINT: http://review:8035/rpc
+    volumes:
+      - leader-data:/app/data
+      - leader-companion-data:/app/companion/data
+      - shared-logs:/app/logs
+    ports:
+      - "8041:8041"
+    command: ["leader:app", "--host", "0.0.0.0", "--port", "8041"]
+    restart: unless-stopped
+    depends_on:
+      - mcp-gateway
+      - literature
+      - experiment
+      - analysis
+      - writing
+      - review
+
+volumes:
+  shared-logs:
+  leader-data:
+  leader-companion-data:

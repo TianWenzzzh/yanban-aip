@@ -1,0 +1,179 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── 全局排版基座（细化迭代 2026-09-18 第二轮）────────────────────────── */
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  font-family: system-ui, -apple-system, "Segoe UI", "PingFang SC",
+    "Microsoft YaHei", "Noto Sans SC", sans-serif;
+  font-size: 14px;
+  line-height: 1.65;
+  color: theme("colors.gray.800");
+}
+
+/* 数字一律等宽（指标卡/耗时/RPC/表格数值），避免跳动与对齐问题 */
+.tnum {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.01em;
+}
+
+/* ID / 代码用等宽栈（覆盖 tailwind 默认 font-mono） */
+code,
+pre,
+.font-mono {
+  font-family: ui-monospace, "Cascadia Mono", "SF Mono", Consolas, monospace;
+}
+
+/* 小号英文/编号标签：轻微加字距更透气 */
+.label-caps {
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* 选区与焦点 */
+::selection {
+  background: theme("colors.primary.100");
+  color: theme("colors.primary.700");
+}
+:focus-visible {
+  outline: 2px solid theme("colors.primary.500");
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* 细滚动条（Chromium/Edge；Firefox 走 scrollbar-*） */
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+*::-webkit-scrollbar-thumb {
+  background: theme("colors.gray.200");
+  border-radius: 8px;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: theme("colors.gray.300");
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+* {
+  scrollbar-width: thin;
+  scrollbar-color: theme("colors.gray.200") transparent;
+}
+
+/* 按钮微按压反馈（配合各按钮的 transition） */
+button:not(:disabled):active {
+  transform: scale(0.985);
+}
+
+/* ── 组件类：按钮/卡片/徽章（字号字重统一出口）──────────────────────── */
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-1.5 rounded-xl bg-primary-600 px-5 text-[14px] font-medium text-white shadow-sm transition-colors hover:bg-primary-700 disabled:cursor-not-allowed disabled:opacity-40;
+    height: 40px;
+  }
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-1.5 rounded-xl border border-gray-200 bg-white px-4 text-[13.5px] font-medium text-gray-600 transition-colors hover:border-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40;
+    height: 36px;
+  }
+  .btn-ghost {
+    @apply inline-flex items-center justify-center rounded-xl px-4 text-[14px] text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700;
+    height: 36px;
+  }
+  .card {
+    @apply rounded-2xl border border-gray-100 bg-white shadow-sm;
+  }
+}
+
+/* ── 报告 Markdown 排版（无 typography 插件，手写最小集）────────────── */
+.report-prose {
+  font-size: 14.5px;
+  line-height: 1.8;
+  color: theme("colors.gray.800");
+}
+.report-prose h1,
+.report-prose h2,
+.report-prose h3 {
+  color: #1e3a8a;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  margin: 18px 0 10px;
+}
+.report-prose h1:first-child,
+.report-prose h2:first-child {
+  margin-top: 4px;
+}
+.report-prose h1 { font-size: 1.28rem; }
+.report-prose h2 { font-size: 1.14rem; }
+.report-prose h3 { font-size: 1.02rem; }
+.report-prose p { margin: 9px 0; }
+.report-prose ul,
+.report-prose ol { margin: 9px 0 9px 22px; }
+.report-prose ul { list-style: disc; }
+.report-prose ol { list-style: decimal; }
+.report-prose li { margin: 4px 0; }
+.report-prose li::marker { color: theme("colors.primary.500"); }
+.report-prose table { border-collapse: collapse; margin: 12px 0; table-layout: fixed; width: 100%; }
+/* 首列定宽：轮 277 量尺实测 390 档「形状」2 字 2 行、「一句话」3 字 3 行（1280 档 0 枚）；6em＝81px 容得下
+   4 个 13.5px 汉字，7em 实测只让第二列多一行。屏面尺 ui_r277_table_fix_candidates.mjs，源码闸门 tests2/test_webui_table_narrow.py。 */
+.report-prose th:first-child,
+.report-prose td:first-child { width: 6em; }
+.report-prose th,
+.report-prose td {
+  border: 1px solid theme("colors.gray.200");
+  padding: 6px 12px;
+  font-size: 13.5px;
+}
+.report-prose th { background: theme("colors.gray.50"); font-weight: 600; }
+.report-prose code {
+  background: theme("colors.gray.100");
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+.report-prose pre {
+  background: theme("colors.gray.50");
+  border: 1px solid theme("colors.gray.100");
+  padding: 12px 14px;
+  border-radius: 10px;
+  overflow-x: auto;
+  margin: 10px 0;
+}
+.report-prose pre code { background: transparent; padding: 0; }
+.report-prose blockquote {
+  border-left: 3px solid theme("colors.primary.200");
+  background: theme("colors.primary.50");
+  border-radius: 0 8px 8px 0;
+  padding: 8px 14px;
+  color: theme("colors.gray.600");
+  margin: 10px 0;
+}
+.report-prose a { color: theme("colors.primary.600"); text-decoration: underline; text-underline-offset: 2px; }
+.report-prose hr { border: none; border-top: 1px solid theme("colors.gray.100"); margin: 16px 0; }
+.report-prose strong { font-weight: 600; color: theme("colors.gray.900"); }
+
+/* ── 暗色主题（反相式：全局 filter + 媒体例外）───────────────────────────
+   说明：这是覆盖全站 7 个页面的低成本做法，不是手工调配的深色色板；
+   图片/视频/canvas/PDF iframe 二次反相以保持原色。后续可替换为设计过的 dark: 色板。 */
+html.dark {
+  filter: invert(0.94) hue-rotate(180deg);
+  background-color: #14161a;
+}
+html.dark img,
+html.dark video,
+html.dark canvas,
+html.dark iframe {
+  filter: invert(1) hue-rotate(180deg);
+}
+html.dark .shadow-sm,
+html.dark .shadow-2xl {
+  box-shadow: 0 1px 2px rgba(255, 255, 255, 0.06), 0 10px 30px rgba(255, 255, 255, 0.05) !important;
+}

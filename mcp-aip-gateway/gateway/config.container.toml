@@ -1,0 +1,35 @@
+# 容器内网关配置：只保留随镜像走的 stdio 上游（宿主机模式用 config.toml 全量配置）
+
+[[server]]
+ns = "yanban"
+transport = "stdio"
+command = "python"
+args = ["demo_mcp_server.py"]
+description = "研伴科研工具（随镜像内置）"
+
+[gateway]
+probe_interval_seconds = 30
+
+[[server]]
+ns = "time"
+transport = "stdio"
+command = "uvx"
+args = ["mcp-server-time", "--local-timezone", "Asia/Shanghai"]
+description = "MCP official time server"
+env = { "UV_DEFAULT_INDEX" = "https://mirrors.aliyun.com/pypi/simple/", "UV_LINK_MODE" = "copy" }
+
+[[server]]
+ns = "fetch"
+transport = "stdio"
+command = "uvx"
+args = ["mcp-server-fetch"]
+description = "MCP official webpage fetch server"
+env = { "UV_DEFAULT_INDEX" = "https://mirrors.aliyun.com/pypi/simple/", "UV_LINK_MODE" = "copy" }
+
+[[server]]
+ns = "git"
+transport = "stdio"
+command = "uvx"
+args = ["mcp-server-git", "--repository", "/repos/yanban"]
+description = "MCP official Git server (yanban repository)"
+env = { "UV_DEFAULT_INDEX" = "https://mirrors.aliyun.com/pypi/simple/", "UV_LINK_MODE" = "copy" }

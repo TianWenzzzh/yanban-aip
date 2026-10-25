@@ -1,0 +1,10 @@
+# 基准 E 组：8070 上游 A2A Agent 专用注册表（扮远端智能体；精简到 httpdemo 单上游）
+
+[[server]]
+ns = "httpdemo"
+transport = "http"
+url = "http://127.0.0.1:8062/mcp"
+description = "streamable-http 传输验证上游（基准栈 8062）"
+
+[gateway]
+probe_interval_seconds = 30

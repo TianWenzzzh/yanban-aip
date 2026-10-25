@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>研伴 · 科研协作工作台</title>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:"Segoe UI","Microsoft YaHei",sans-serif; background:linear-gradient(135deg,#0f0c29 0%,#1a1a3e 50%,#24243e 100%); color:#e0e0f0; min-height:100vh; padding:24px; }
+  .header { text-align:center; margin-bottom:24px; }
+  .header h1 { font-size:26px; background:linear-gradient(90deg,#7f7fd5,#86a8e7,#91eae4); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+  .header .sub { color:#8888aa; font-size:13px; margin-top:6px; }
+  .card { background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:14px; padding:20px; margin-bottom:18px; backdrop-filter:blur(8px); }
+  textarea { width:100%; height:80px; background:rgba(0,0,0,0.35); color:#e0e0f0; border:1px solid #4444aa; border-radius:10px; padding:12px; font-size:14px; resize:vertical; }
+  .btn { background:linear-gradient(90deg,#667eea,#764ba2); color:#fff; border:none; border-radius:10px; padding:11px 26px; font-size:15px; cursor:pointer; margin-top:10px; }
+  .btn:disabled { opacity:0.5; cursor:not-allowed; }
+  .btn:hover:not(:disabled) { filter:brightness(1.15); }
+  .examples { margin-top:10px; }
+  .chip { display:inline-block; background:rgba(134,168,231,0.15); border:1px solid #667eea55; color:#aabbff; border-radius:16px; padding:5px 13px; font-size:12px; margin:3px; cursor:pointer; }
+  .chip:hover { background:rgba(134,168,231,0.3); }
+  .status-line { display:flex; align-items:center; gap:10px; margin:8px 0; font-size:14px; }
+  .dot { width:10px; height:10px; border-radius:50%; background:#555; flex-shrink:0; }
+  .dot.running { background:#f5a623; animation:pulse 1.2s infinite; }
+  .dot.done { background:#2ecc71; }
+  .dot.fail { background:#e74c3c; }
+  @keyframes pulse { 0%,100%{box-shadow:0 0 0 0 #f5a62388;} 50%{box-shadow:0 0 0 6px #f5a62300;} }
+  .plan-item { background:rgba(0,0,0,0.25); border-radius:8px; padding:10px 14px; margin:6px 0; }
+  .badge { font-size:11px; padding:2px 10px; border-radius:10px; margin-left:8px; }
+  .badge.completed { background:#2ecc7133; color:#7dffb0; }
+  .badge.running { background:#f5a62333; color:#ffc95e; }
+  .badge.failed, .badge.rejected { background:#e74c3c33; color:#ff9c9c; }
+  .badge.awaiting { background:#9b59b633; color:#d2a6ff; }
+  .gate { border-left:3px solid #91eae4; padding-left:12px; margin-top:10px; font-size:13px; color:#b0e8e0; }
+  #report { line-height:1.75; font-size:14.5px; }
+  #report h1,#report h2,#report h3 { color:#9db8ff; margin:14px 0 8px; }
+  #report table { border-collapse:collapse; margin:10px 0; }
+  #report th,#report td { border:1px solid #44448a; padding:6px 12px; }
+  #report code { background:rgba(0,0,0,0.4); padding:2px 6px; border-radius:4px; }
+  #report pre { background:rgba(0,0,0,0.4); padding:12px; border-radius:8px; overflow-x:auto; }
+  .hidden { display:none; }
+  .spinner { display:inline-block; width:14px; height:14px; border:2px solid #667eea; border-top-color:transparent; border-radius:50%; animation:spin 0.8s linear infinite; }
+  @keyframes spin { to { transform:rotate(360deg); } }
+  .meta { color:#7777aa; font-size:12px; margin-top:6px; }
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>研伴 · 科研协作智能体工作台</h1>
+  <div class="sub">基于 AIP 国标 GB/Z 185 ｜ Leader 编排 × 5 科研 Partner × MCP↔AIP 网关 × 质量闭环</div>
+</div>
+
+<div class="card">
+  <textarea id="query" placeholder="输入科研任务，例如：调研多智能体协作的研究现状，设计验证实验并评审结论…"></textarea>
+  <button class="btn" id="submitBtn" onclick="submitTask()">🚀 提交任务</button>
+  <div class="examples">
+    <span class="chip" onclick="fill(this)">检索 multi-agent 文献 2篇，并写一段相关工作</span>
+    <span class="chip" onclick="fill(this)">对比 RAG 与微调在医疗问答的准确率，设计实验方案</span>
+    <span class="chip" onclick="fill(this)">检索大模型协作文献，并评审结论：协作使准确率提升5%</span>
+  </div>
+</div>
+
+<div class="card hidden" id="planCard">
+  <div style="font-weight:bold; margin-bottom:8px;">📋 编排状态 <span id="statusBadge"></span></div>
+  <div id="planList"></div>
+  <div class="gate hidden" id="gateBox"></div>
+  <div class="meta" id="metaLine"></div>
+</div>
+
+<div class="card hidden" id="reportCard">
+  <div style="font-weight:bold; margin-bottom:8px;">📄 聚合报告 <span class="badge" id="gateBadge"></span></div>
+  <div id="report"></div>
+</div>
+
+<script>
+let pollTimer = null;
+function fill(el) { document.getElementById('query').value = el.textContent.replace(/^[🚀📋📄]\s*/, ''); }
+
+async function submitTask() {
+  const q = document.getElementById('query').value.trim();
+  if (!q) return alert('请输入任务');
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> 编排中…';
+  document.getElementById('planCard').classList.remove('hidden');
+  document.getElementById('reportCard').classList.add('hidden');
+  document.getElementById('planList').innerHTML = '<div class="status-line"><span class="dot running"></span>Leader 正在做意图分析与任务分解…</div>';
+  const r = await (await fetch('/task', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({query:q})})).json();
+  poll(r.task_id);
+}
+
+function poll(tid) {
+  pollTimer = setInterval(async () => {
+    const d = await (await fetch('/task/' + tid)).json();
+    render(d);
+    if (d.status !== 'running') { clearInterval(pollTimer); finish(d); }
+  }, 2500);
+}
+
+function badgeOf(state) {
+  if (state.includes('Completed')) return '<span class="badge completed">完成</span>';
+  if (state.includes('Running') || state.includes('running')) return '<span class="badge running">执行中</span>';
+  if (state.includes('Input')) return '<span class="badge awaiting">等待补充</span>';
+  return '<span class="badge failed">' + state.replace('TaskState.','') + '</span>';
+}
+
+function render(d) {
+  const list = document.getElementById('planList');
+  let html = '<div class="status-line"><span class="dot ' + (d.status==='running'?'running':'done') + '"></span>' +
+    '任务 ' + d.task_id + (d.status==='running' ? ' · Leader 编排中（并发执行子任务）' : ' · 编排完成') + '</div>';
+  if (d.plan && d.plan.length) {
+    const states = {}; (d.subresults||[]).forEach(s => states[s.partner] = s);
+    d.plan.forEach((p,i) => {
+      const s = states[p.partner] || (d.subresults&&d.subresults[i]);
+      const st = s ? s.state : 'pending';
+      const dot = st==='pending' ? '' : (st.includes('Completed') ? 'done' : (st.includes('Failed')||st.includes('Rejected')?'fail':'running'));
+      html += '<div class="plan-item"><div class="status-line"><span class="dot '+dot+'"></span><b>'+(i+1)+'. '+p.partner+'</b>'+badgeOf(st)+'</div>' +
+        '<div style="color:#9999bb; font-size:12.5px; margin-top:4px;">'+p.input.slice(0,120)+'</div>' +
+        (s ? '<div style="color:#7777aa; font-size:11.5px;">耗时 '+s.duration_ms+'ms · RPC '+s.rpc_calls+' 次'+(s.error?' · '+s.error.slice(0,60):'')+'</div>' : '') + '</div>';
+    });
+  }
+  document.getElementById('statusBadge').innerHTML = d.status==='running' ? '<span class="badge running">编排中</span>' : '<span class="badge completed">'+d.status+'</span>';
+  list.innerHTML = html;
+  if (d.final_report) {
+    document.getElementById('reportCard').classList.remove('hidden');
+    document.getElementById('report').innerHTML = marked.parse(d.final_report);
+    const g = d.quality_gate || {};
+    const gb = document.getElementById('gateBadge');
+    if (g.enabled) { gb.textContent = '质量闭环: ' + (g.final_verdict || '—'); gb.className = 'badge ' + (g.final_verdict==='accept'||g.final_verdict==='minor' ? 'completed' : 'awaiting'); }
+    if (g.rounds && g.rounds.length) {
+      const box = document.getElementById('gateBox');
+      box.classList.remove('hidden');
+      box.innerHTML = '🔍 质量闭环：' + g.rounds.map(r2 => '第'+r2.round+'轮审稿判定「'+r2.verdict+'」' + (r2.revised?'→ 已自动按意见修订':'')).join('；');
+    }
+    document.getElementById('metaLine').textContent = '端到端耗时 ' + (d.elapsed_ms||0) + 'ms · 跨智能体 RPC ' + (d.subresults||[]).reduce((a,s)=>a+s.rpc_calls,0) + ' 次 · 报告 ' + (d.final_report||'').length + ' 字';
+  }
+}
+
+function finish(d) {
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = false; btn.innerHTML = '🚀 提交任务';
+  if (d.status === 'failed' && d.error) {
+    const box = document.getElementById('gateBox');
+    box.classList.remove('hidden');
+    box.style.borderLeftColor = '#e74c3c';
+    box.innerHTML = '⚠️ 编排失败：' + d.error + '（子任务产出见上方卡片，可直接复用）';
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,32 @@
+[project]
+name = "yanban"
+version = "0.1.0"
+description = "研伴·科研协作智能体团队（AIC 2026 智能体互联赛）"
+requires-python = ">=3.10,<4.0"
+dependencies = [
+    "fastapi>=0.100.0",
+    "uvicorn>=0.30.0",
+    "httpx>=0.24.0",
+    "acps-sdk",
+    "pymupdf>=1.28.2",
+]
+
+[tool.uv.sources]
+acps-sdk = { path = "../ACPs-community/acps-sdk", editable = true }
+
+[[tool.uv.index]]
+url = "https://mirrors.aliyun.com/pypi/simple/"
+default = true
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+    "pytest-asyncio>=1.4.0",
+]
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+markers = [
+    "live: 需要在役栈与真实 GLM/arXiv 的在线集成测试（默认跳过：-m 'not live'）",
+    "unit: 离线单元测试",
+]
+addopts = "-m 'not live'"

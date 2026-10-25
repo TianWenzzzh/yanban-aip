@@ -1,0 +1,20 @@
+# 【本地待发布物料 · R14】推送到远端后自动生效；本仓当前无远端（红线：不自行 push）
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.14"
+      - name: 单元测试
+        run: uv run pytest tests/ -q
+      - name: 一致性套件
+        run: uv run python tests/conformance/run_conformance.py

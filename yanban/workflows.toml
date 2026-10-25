@@ -1,0 +1,24 @@
+# 研伴 SOP 工作流模板（MetaGPT 式确定性流水线）
+# 命中模板时跳过 LLM 分解，直接按 stage 依赖 DAG 确定性执行——演示稳定、且体现"结构化契约抑制幻觉"的学术叙事
+# v4（W2）：stage 声明 key/depends——上游产出自动注入下游输入；review 审真实草稿而非写死结论
+# 匹配规则：query 含任一 trigger 词组
+
+[[workflow]]
+id = "paper-pipeline"
+name = "论文全流程 SOP"
+triggers = ["论文全流程", "完整写一篇", "从检索到审稿", "sop论文"]
+stages = [
+    { key = "literature", partner = "literature", input = "检索与主题相关的代表性文献 3篇，输出文献清单与脉络小结。主题：{topic}。要求：清单逐条编号（文献1/文献2/文献3），每条给出标题、年份、核心贡献（各不少于 80 字）；脉络小结不少于 300 字，须指明各文献间的关系。" },
+    { key = "experiment", depends = ["literature"], partner = "experiment", input = "针对主题「{topic}」，设计验证其核心主张的实验方案（假设/变量/对照/指标）。方案需引用上游文献脉络中的代表性工作。" },
+    { key = "writing", depends = ["literature", "experiment"], partner = "writing", input = "基于上游文献脉络与实验方案，为主题「{topic}」撰写论文核心章节，分【相关工作】【方法】【预期结果】三小节，全文不少于 800 字。硬性要求：相关工作小节必须编号引用上游文献清单的具体条目（写作 [文献1]、[文献2] 等标注），方法小节必须对应实验方案中的具体假设（写明 假设H1/H2）。要点：协议标准化、工具生态接入、多智能体协同编排。" },
+    { key = "review", depends = ["writing"], partner = "review", input = "评审上游产出的研究论文草稿（见上游产出），按 方法/写作/贡献 三视角给出意见——每条意见必须引用草稿中的具体内容（编号引用 [文献N] 或小节名），并给出 Meta 结论（接收/小修/大修/拒稿）。" },
+]
+
+[[workflow]]
+id = "research-survey"
+name = "调研 SOP"
+triggers = ["调研现状", "研究现状调研", "sop调研"]
+stages = [
+    { key = "literature", partner = "literature", input = "检索主题「{topic}」的代表性文献 5篇，输出结构化清单。" },
+    { key = "experiment", depends = ["literature"], partner = "experiment", input = "针对主题「{topic}」的研究空白（参考上游文献清单），提出一个可验证的实验设想（简要方案）。" },
+]

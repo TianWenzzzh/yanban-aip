@@ -1,0 +1,10 @@
+.venv/
+logs/
+__pycache__/
+.env
+*.key
+*.pem
+*.jsonl
+data/knowledge/
+data/yanban.db-wal
+data/yanban.db-shm

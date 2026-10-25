@@ -1,0 +1,41 @@
+# 研伴 Partner 注册表（Leader 配置驱动）
+# endpoint：宿主机模式；compose_endpoint：容器网络模式（YANBAN_NET=compose 时生效）
+
+[[partner]]
+name = "literature"
+endpoint = "http://localhost:8031/rpc"
+compose_endpoint = "http://literature:8031/rpc"
+skill_hint = "学术文献检索（arXiv 真实数据）与文献综述框架生成。适用于：找论文、调研研究现状、综述提纲。"
+
+[[partner]]
+name = "mcp_gateway"
+endpoint = "http://localhost:8021/rpc"
+compose_endpoint = "http://mcp-gateway:8021/rpc"
+skill_hint = "MCP 工具生态网关。工具选择规则（必须遵守）：git__git_log 等用于本地代码仓库（输入 {\"tool\":\"git__git_log\",\"arguments\":{\"repo_path\":\"D:/...\"}}）；fetch__fetch 只能用于 http(s) 网页地址（{\"tool\":\"fetch__fetch\",\"arguments\":{\"url\":\"https://...\"}}），禁止对本地路径使用 fetch。适用于：需要仓库提交历史、网页内容时。"
+
+[[partner]]
+name = "experiment"
+endpoint = "http://localhost:8032/rpc"
+compose_endpoint = "http://experiment:8032/rpc"
+skill_hint = "实验设计：研究问题→假设/变量/对照/指标/风险的完整实验方案。"
+
+[[partner]]
+name = "analysis"
+endpoint = "http://localhost:8033/rpc"
+compose_endpoint = "http://analysis:8033/rpc"
+skill_hint = "数据分析：输入 CSV 数据+分析目标，输出真实统计计算结果（均值/方差/相关系数）与解读。"
+
+[[partner]]
+name = "writing"
+endpoint = "http://localhost:8034/rpc"
+compose_endpoint = "http://writing:8034/rpc"
+skill_hint = "论文写作：要点列表→学术语体段落（含引用占位）。"
+
+[[partner]]
+name = "review"
+endpoint = "http://localhost:8035/rpc"
+compose_endpoint = "http://review:8035/rpc"
+skill_hint = "模拟审稿：草稿→3 审稿人意见（方法/写作/贡献）+ Meta 建议。"
+
+[leader]
+aic = "1.2.156.3088.1.1.LDR001.LDR001.1.0002"

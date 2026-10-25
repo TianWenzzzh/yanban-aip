@@ -1,0 +1,35 @@
+# 通用 Partner/Leader 镜像（build context = D:/code）
+# APP_DIR: yanban 或 mcp-aip-gateway
+ARG APP_DIR=yanban
+FROM python:3.14-slim
+ARG APP_DIR
+WORKDIR /app
+
+# Linux 新机适配：debian 官方源在本机网络不可达，切换阿里云镜像（原 Windows 机用官方源）
+RUN sed -i 's|deb.debian.org|mirrors.aliyun.com|g' /etc/apt/sources.list.d/debian.sources /etc/apt/sources.list 2>/dev/null; \
+    apt-get update && apt-get install -y --no-install-recommends git && rm -rf /var/lib/apt/lists/*
+ENV GIT_PYTHON_REFRESH=quiet
+
+COPY ${APP_DIR}/ /app/
+COPY ACPs-community/acps-sdk /deps/acps-sdk
+
+# v5：固定 acps 依赖树版本（实证组合，杀掉 pip 对 aio-pika→yarl 的全版本回溯——
+# 阿里镜像网络抖动会让回溯穷尽后误报 ResolutionImpossible；首段 hatchling 同理钉版）
+RUN pip install --no-cache-dir -i https://mirrors.aliyun.com/pypi/simple/ \
+    hatchling \
+ && pip install --no-cache-dir -i https://mirrors.aliyun.com/pypi/simple/ \
+    fastapi uvicorn httpx pytest mcp uv \
+    "aio-pika==10.0.1" "aiormq==7.0.0" "pamqp==4.0.1" \
+    "yarl==1.24.5" "multidict==6.8.0" "propcache==0.2.1" \
+    "PyMuPDF==1.28.2" \
+ && pip install --no-cache-dir --no-build-isolation /deps/acps-sdk
+
+# 🔴 PDF 解析的依赖必须烤进镜像：轮 302 实测线上那份 pymupdf 是当年在**运行中的容器里** pip 装的，
+#    只活在可写层 ⇒ 一次 recreate 就没了，而 `check_cloud_drift.py`（只比代码包）与 pytest（在本地跑）
+#    两边都看不见它，PDF 能力会**静默**降级。钉成 1.28.2＝现读 `pip show pymupdf` 的那个版本。
+#    下面这行是构建期断言：装不上就直接 build 失败，不允许留到运行时才发现。
+RUN python -c "import pymupdf, fitz; print('[build] pymupdf', pymupdf.__version__, 'ok')"
+
+ENV PYTHONPATH=/app
+
+ENTRYPOINT ["python", "-m", "uvicorn"]

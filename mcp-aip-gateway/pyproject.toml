@@ -1,0 +1,28 @@
+[project]
+name = "mcp-aip-gateway"
+version = "2.0.0a2"
+description = "MCP ↔ AIP adapter gateway: expose any MCP server as an AIP (Agent Interconnection Protocol) partner"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "acps-sdk",
+    "fastapi>=0.141.1",
+    "httpx>=0.28",
+    "mcp[cli]>=2.1.1",
+    "tomli>=2.4.1",
+]
+
+[[tool.uv.index]]
+url = "https://mirrors.aliyun.com/pypi/simple/"
+default = true
+
+[tool.uv.sources]
+acps-sdk = { path = "../ACPs-community/acps-sdk", editable = true }
+
+[project.optional-dependencies]
+bridge = ["httpx>=0.28"]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+]

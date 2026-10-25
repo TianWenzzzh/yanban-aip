@@ -1,0 +1,72 @@
+{
+  "aic": "1.2.156.3088.1.1.YNBAN1.ANA001.1.0000",
+  "active": true,
+  "lastModifiedTime": "2026-09-04T15:24:10.997038+00:00",
+  "protocolVersion": "02.02",
+  "name": "研伴·数据分析智能体",
+  "description": "研伴科研协作团队的数据分析 Partner：对用户提供的 CSV 数据用 Python 标准库执行真实统计计算（各数值列的均值/标准差/最值/中位数，数值列两两皮尔逊相关系数），并由大模型基于真实数字撰写分析解读，不编造数据。缺 CSV 数据时返回 awaiting-input。",
+  "version": "1.0.0",
+  "provider": {
+    "organization": "研伴科研协作团队",
+    "department": "",
+    "url": "",
+    "license": ""
+  },
+  "securitySchemes": {
+    "mtls": {
+      "type": "mutualTLS",
+      "description": "智能体间mTLS双向认证"
+    }
+  },
+  "endPoints": [
+    {
+      "url": "amqps://wt.ioa.pub:5671/acps?inbox=inbox_1.2.156.3088.1.1.YNBAN1.ANA001.1.0000",
+      "transport": "AMQP",
+      "security": [
+        {
+          "mtls": []
+        }
+      ]
+    }
+  ],
+  "capabilities": {
+    "streaming": false,
+    "notification": false,
+    "messageQueue": [
+      "rabbitmq:>=4.2"
+    ]
+  },
+  "defaultInputModes": [
+    "text/plain",
+    "application/json"
+  ],
+  "defaultOutputModes": [
+    "text/plain",
+    "text/markdown",
+    "application/json"
+  ],
+  "skills": [
+    {
+      "id": "yanban.analysis.stats",
+      "name": "统计分析服务",
+      "description": "输入 ```csv 代码块（表头+数值行）与分析目标，输出真实统计结果 JSON（描述统计+皮尔逊相关）与 200 字内基于数字的解读。\n【输入要求】\n必填：```csv 数据块。\n可选：分析目标文字。\n当缺少 csv 块时返回 Task.state=\"awaiting-input\"。",
+      "tags": [
+        "统计分析",
+        "相关系数",
+        "数据解读",
+        "科研"
+      ],
+      "examples": [
+        "分析这两组实验指标的相关性：```csv\\naccuracy,latency\\n0.81,320\\n0.85,410\\n```"
+      ],
+      "version": "1.0.0",
+      "inputModes": [
+        "text/plain"
+      ],
+      "outputModes": [
+        "text/plain",
+        "text/markdown"
+      ]
+    }
+  ]
+}

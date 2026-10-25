@@ -1,0 +1,52 @@
+# MCP↔AIP 网关上游注册表（配置驱动）
+# 每个上游 MCP Server 一个 [[server]] 段；ns 是命名空间（隔离工具名，进入 skill.id 前缀）
+
+[[server]]
+ns = "yanban"
+transport = "stdio"
+command = "python"
+args = ["demo_mcp_server.py"]
+description = "研伴科研工具（演示）"
+
+[[server]]
+ns = "fetch"
+transport = "stdio"
+command = "uvx"
+args = ["mcp-server-fetch"]
+description = "官方网页抓取参考服务器（真实 MCP 生态）"
+# 首次运行 uvx 需下载 mcp-server-fetch：PyPI 走阿里镜像（Linux 无 Clash，直连）
+env = { "UV_DEFAULT_INDEX" = "https://mirrors.aliyun.com/pypi/simple/" }
+
+[[server]]
+ns = "git"
+transport = "stdio"
+command = "uvx"
+args = ["mcp-server-git", "--repository", "../yanban"]
+description = "官方 Git 服务器（限定 yanban 仓库：查提交历史/差异，用于科研代码演进分析）"
+env = { "UV_DEFAULT_INDEX" = "https://mirrors.aliyun.com/pypi/simple/" }
+
+[[server]]
+ns = "httpdemo"
+transport = "http"
+url = "http://127.0.0.1:8022/mcp"
+description = "本地 streamable-http 传输验证上游"
+
+# A2A 上游（万桥 v2.0.0-alpha）：url 为 AgentCard 基地址，探活=周期拉 Card，
+# 技能按弱契约聚合（无 inputSchema，如实声明）。启用前先起一个 A2A Agent：
+#   A2A_PORT=8070 uv run uvicorn --factory gateway.a2a_server:create_app_from_env
+# [[server]]
+# ns = "wanbridge-remote"
+# transport = "a2a"
+# url = "http://127.0.0.1:8070"
+# description = "远端万桥实例（级联演示）"
+
+[gateway]
+probe_interval_seconds = 30
+
+[[server]]
+ns = "time"
+transport = "stdio"
+command = "uvx"
+args = ["mcp-server-time", "--local-timezone", "Asia/Shanghai"]
+description = "MCP official time server (current time/timezone conversion, supporting references to temporal data in scientific research scenarios)"
+env = { "UV_DEFAULT_INDEX" = "https://mirrors.aliyun.com/pypi/simple/" }

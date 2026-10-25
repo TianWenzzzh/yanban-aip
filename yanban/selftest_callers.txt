@@ -1,0 +1,17 @@
+# 自测调用名单（机器可读，一行一颗 caller 标识 ＋ 理由）
+#
+# 为什么要这张表：被调用次数这一项的分数取决于"外部"那个数，而我们的探针/交付脚本
+# 会造出**看起来像外部**的 senderId。最尖锐的一例：2026-10-06 01:5x 用交付件
+# `输出/交付/call_yanban.py` 自测时填了 `1.2.156.3088.1.BUPT.TESTTEAM.XXXX1111.2222`，
+# 而 `wutong_call_volume.py` 的 V1 口径是"caller 含 BUPT ⇒ 外部" ⇒ 这一条会直接
+# 把自家测试读成"来了一个外部团队调我们"。名单里的东西一律单列成「自测」，
+# **永不进外部**（这台尺另有一条方向断言盯着这件事）。
+#
+# 格式：`<caller 标识> <空格> 说明`；# 开头是注释；空行忽略。
+# 加行的时机：任何探针/脚本用了非本队 AIC 的 senderId 打线上，当天就要登记到这里。
+
+1.2.156.3088.1.BUPT.TESTTEAM.XXXX1111.2222 轮 306 交付件自测（call_yanban.py 默认形状示范，BUPT 段是自编的）
+1.2.156.3088.1.9999.R182CHK.SELFTEST.0001 轮 182c 伙伴审计链自检（deploy_partners_audit/verify_rpc_audit_live）
+1.2.156.3088.1.9999.R197CHK.CLOUD.54bd06a7 轮 197 Leader /rpc 派发自检（probe_leader_tool_rpc_r197）
+guest-selftest 轮 306 交付件自测（未填 AIC 时的 guest- 前缀形状之一）
+1.2.156.3088.1.9999.R310CHK.SELFTEST.0001 轮 310 回声自激专项：4 发形状诊断（r310diag-pure-68edf8e7 / -echo-8996a884 / -rewritten-e709a39c / -gwown-30167128）＋1 发修复验证（r310fix-50adb948，走公网 mTLS 入口那发）；被调方 access 账里逐发有一行，取数台账 输出/_logs/r310_g5_selfcall.log

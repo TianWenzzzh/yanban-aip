@@ -1,0 +1,181 @@
+{
+  "started_at": "2026-09-07 00:13:22",
+  "generated_at": "2026-09-07 00:13:33",
+  "tasks": [
+    {
+      "task_id": "A1",
+      "group": "A",
+      "path": "AIP→MCP",
+      "description": "AIP start yanban__literature_search",
+      "ok": true,
+      "latency_ms": 354,
+      "round_trips": 2,
+      "detail": "state=completed text='主题「大模型多智能体协作」检索结果（3 篇，近5年）：\\n1. [2026] 《大模型多智能体协作研究进展（1）：方法与实'",
+      "extra": {
+        "raw_text": "主题「大模型多智能体协作」检索结果（3 篇，近5年）：\n1. [2026] 《大模型多智能体协作研究进展（1）：方法与实验》 作者1 等 · 计算机学报 · DOI:10.3724/SP.J.1000.2000\n2. [2025] 《大模型多智能体协作研究进展（2）：方法与实验》 作者2 等 · 计算机学报 · DOI:10.3724/SP.J.1000.2001\n3. [2024] 《大模型多智能体协作研究进展（3）：方法与实验》 作者3 等 · 计算机学报 · DOI:10.3724/SP.J.1000.2002"
+      }
+    },
+    {
+      "task_id": "A2",
+      "group": "A",
+      "path": "AIP→MCP",
+      "description": "AIP start yanban__summarize_paper",
+      "ok": true,
+      "latency_ms": 295,
+      "round_trips": 2,
+      "detail": "state=completed text='《Agent Lab》要点摘要（≤50词）：多智能体系统通过任务分解与协同执行提升科研效率，本文提出一种结构化契约流水线'",
+      "extra": {
+        "raw_text": "《Agent Lab》要点摘要（≤50词）：多智能体系统通过任务分解与协同执行提升科研效率，本文提出一种结构化契约流水线方法。…（共41字压缩）"
+      }
+    },
+    {
+      "task_id": "A3",
+      "group": "A",
+      "path": "AIP→MCP",
+      "description": "AIP start httpdemo__literature_search",
+      "ok": true,
+      "latency_ms": 295,
+      "round_trips": 2,
+      "detail": "state=completed text='主题「大模型多智能体协作」检索结果（3 篇，近5年）：\\n1. [2026] 《大模型多智能体协作研究进展（1）：方法与实'",
+      "extra": {
+        "raw_text": "主题「大模型多智能体协作」检索结果（3 篇，近5年）：\n1. [2026] 《大模型多智能体协作研究进展（1）：方法与实验》 作者1 等 · 计算机学报 · DOI:10.3724/SP.J.1000.2000\n2. [2025] 《大模型多智能体协作研究进展（2）：方法与实验》 作者2 等 · 计算机学报 · DOI:10.3724/SP.J.1000.2001\n3. [2024] 《大模型多智能体协作研究进展（3）：方法与实验》 作者3 等 · 计算机学报 · DOI:10.3724/SP.J.1000.2002"
+      }
+    },
+    {
+      "task_id": "B1",
+      "group": "B",
+      "path": "A2A→MCP 经万桥",
+      "description": "A2A tasks/send yanban__literature_search",
+      "ok": true,
+      "latency_ms": 325,
+      "round_trips": 1,
+      "detail": "a2a=completed→aip=completed text='主题「大模型多智能体协作」检索结果（3 篇，近5年）：\\n1. [2026] 《大模型多智能体协作研究进展（1）：方法与实验》 作者1 等 · 计算机学报 · D'",
+      "extra": {
+        "a2a_state": "completed",
+        "aip_state": "completed"
+      }
+    },
+    {
+      "task_id": "B2",
+      "group": "B",
+      "path": "A2A→MCP 经万桥",
+      "description": "A2A tasks/send yanban__summarize_paper",
+      "ok": true,
+      "latency_ms": 7,
+      "round_trips": 1,
+      "detail": "a2a=completed→aip=completed text='《Agent Lab》要点摘要（≤50词）：多智能体系统通过任务分解与协同执行提升科研效率，本文提出一种结构化契约流水线方法。…（共41字压缩）'",
+      "extra": {
+        "a2a_state": "completed",
+        "aip_state": "completed"
+      }
+    },
+    {
+      "task_id": "B3",
+      "group": "B",
+      "path": "A2A→MCP 经万桥",
+      "description": "A2A tasks/send httpdemo__literature_search",
+      "ok": true,
+      "latency_ms": 11,
+      "round_trips": 1,
+      "detail": "a2a=completed→aip=completed text='主题「大模型多智能体协作」检索结果（3 篇，近5年）：\\n1. [2026] 《大模型多智能体协作研究进展（1）：方法与实验》 作者1 等 · 计算机学报 · D'",
+      "extra": {
+        "a2a_state": "completed",
+        "aip_state": "completed"
+      }
+    },
+    {
+      "task_id": "C1",
+      "group": "B",
+      "path": "A2A→MCP 经万桥",
+      "description": "A2A tasks/send no_such_tool",
+      "ok": true,
+      "latency_ms": 8,
+      "round_trips": 1,
+      "detail": "a2a=failed→aip=failed text=\"未知或已下架工具 'no_such_tool'。当前可用：['httpdemo__literature_search', 'httpdemo__summariz\"",
+      "extra": {
+        "a2a_state": "failed",
+        "aip_state": "failed"
+      }
+    },
+    {
+      "task_id": "C2",
+      "group": "C",
+      "path": "AIP→MCP",
+      "description": "AIP start not_exist_tool",
+      "ok": true,
+      "latency_ms": 271,
+      "round_trips": 1,
+      "detail": "state=rejected text=\"未知或已下架工具 'not_exist_tool'。当前可用：['httpdemo__literature_search\"",
+      "extra": {
+        "raw_text": "未知或已下架工具 'not_exist_tool'。当前可用：['httpdemo__literature_search', 'httpdemo__summarize_paper', 'yanban__literature_search', 'yanban__summarize_paper']"
+      }
+    },
+    {
+      "task_id": "D1",
+      "group": "D",
+      "path": "发现",
+      "description": "well-known 双路径发现",
+      "ok": true,
+      "latency_ms": 26,
+      "round_trips": 2,
+      "detail": "双路径同卡",
+      "extra": {}
+    },
+    {
+      "task_id": "D2",
+      "group": "D",
+      "path": "全回环",
+      "description": "A2A客户端→万桥A2A面→MCP→桥映射",
+      "ok": true,
+      "latency_ms": 272,
+      "round_trips": 1,
+      "detail": "aip_state=completed legal=True 内容与A1等价=True",
+      "extra": {
+        "equivalent_to_A1": true
+      }
+    }
+  ],
+  "groups": {
+    "A": {
+      "tasks": 3,
+      "success_rate": 1.0,
+      "latency_avg_ms": 314,
+      "latency_p50_ms": 295,
+      "latency_max_ms": 354,
+      "round_trips_avg": 2.0
+    },
+    "B": {
+      "tasks": 4,
+      "success_rate": 1.0,
+      "latency_avg_ms": 87,
+      "latency_p50_ms": 11,
+      "latency_max_ms": 325,
+      "round_trips_avg": 1.0
+    },
+    "C": {
+      "tasks": 1,
+      "success_rate": 1.0,
+      "latency_avg_ms": 271,
+      "latency_p50_ms": 271,
+      "latency_max_ms": 271,
+      "round_trips_avg": 1.0
+    },
+    "D": {
+      "tasks": 2,
+      "success_rate": 1.0,
+      "latency_avg_ms": 149,
+      "latency_p50_ms": 272,
+      "latency_max_ms": 272,
+      "round_trips_avg": 1.5
+    }
+  },
+  "total": {
+    "tasks": 10,
+    "success_rate": 1.0,
+    "latency_avg_ms": 186,
+    "latency_p50_ms": 272,
+    "latency_max_ms": 354,
+    "round_trips_avg": 1.4
+  },
+  "note": "B/C 组共用 1 次 AgentCard 发现（D1 单独计时），组内均摊"
+}

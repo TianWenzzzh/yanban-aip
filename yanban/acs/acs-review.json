@@ -1,0 +1,72 @@
+{
+  "aic": "1.2.156.3088.1.1.YNBAN1.REV001.1.0000",
+  "active": true,
+  "lastModifiedTime": "2026-09-04T15:24:10.998508+00:00",
+  "protocolVersion": "02.02",
+  "name": "研伴·模拟审稿智能体",
+  "description": "研伴科研协作团队的模拟审稿 Partner：以方法/写作/贡献三位审稿人视角评审草稿，意见具体引用原文，各给主要/次要问题与评分，输出 Meta 结论（接收/小修/大修/拒稿+最优先修改项）。草稿不足 50 字时返回 awaiting-input。",
+  "version": "1.0.0",
+  "provider": {
+    "organization": "研伴科研协作团队",
+    "department": "",
+    "url": "",
+    "license": ""
+  },
+  "securitySchemes": {
+    "mtls": {
+      "type": "mutualTLS",
+      "description": "智能体间mTLS双向认证"
+    }
+  },
+  "endPoints": [
+    {
+      "url": "amqps://wt.ioa.pub:5671/acps?inbox=inbox_1.2.156.3088.1.1.YNBAN1.REV001.1.0000",
+      "transport": "AMQP",
+      "security": [
+        {
+          "mtls": []
+        }
+      ]
+    }
+  ],
+  "capabilities": {
+    "streaming": false,
+    "notification": false,
+    "messageQueue": [
+      "rabbitmq:>=4.2"
+    ]
+  },
+  "defaultInputModes": [
+    "text/plain",
+    "application/json"
+  ],
+  "defaultOutputModes": [
+    "text/plain",
+    "text/markdown",
+    "application/json"
+  ],
+  "skills": [
+    {
+      "id": "yanban.review.simulate",
+      "name": "模拟评审服务",
+      "description": "输入草稿文本（≥50 字），输出 R1 方法/R2 写作/R3 贡献三份意见（主要问题 2 条+次要 1 条+评分 x/10）与 Meta 结论。\n【输入要求】\n必填：草稿文本。\n可选：评审侧重、目标会议级别。\n当草稿不足 50 字时返回 Task.state=\"awaiting-input\"。",
+      "tags": [
+        "模拟审稿",
+        "同行评审",
+        "质量评估",
+        "科研"
+      ],
+      "examples": [
+        "请评审这段结论：多智能体系统通过标准化协议实现协作，实验显示准确率提升5%"
+      ],
+      "version": "1.0.0",
+      "inputModes": [
+        "text/plain"
+      ],
+      "outputModes": [
+        "text/plain",
+        "text/markdown"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,106 @@
+{
+  "aic": "1.2.156.3088.1.BUPT.BNN2UD.A0G0KD.YYTVI4.1DHO",
+  "name": "研伴·文献检索智能体",
+  "active": true,
+  "skills": [
+    {
+      "id": "yanban.literature.search",
+      "name": "学术文献检索服务",
+      "tags": [
+        "文献检索",
+        "学术搜索",
+        "科研",
+        "综述辅助"
+      ],
+      "version": "1.0.0",
+      "examples": [
+        "帮我检索近五年关于大语言模型多智能体协作的中英文文献，按相关度排序，给我20篇",
+        "检索知识图谱与RAG融合方向的代表性论文，重点要综述类文献",
+        "我想调研联邦学习在医疗影像的应用，帮我找高被引文献并整理成清单"
+      ],
+      "inputModes": [
+        "text/plain"
+      ],
+      "description": "根据研究主题、关键词、时间范围、学科领域与语种检索学术文献（含中文与英文数据库），输出结构化文献清单：题名、作者、年份、来源期刊/会议、摘要、DOI/链接，并按相关度排序；支持限定综述类/方法类文献、高被引优先等过滤条件。\n【输入要求】\n必填：研究主题或关键词。\n可选：时间范围（如近五年）、语种、学科领域、文献类型、数量上限（默认20篇）。\n当缺少必填项时返回 Task.state=\"awaiting-input\"，提示补充研究主题。",
+      "outputModes": [
+        "text/markdown",
+        "application/json"
+      ]
+    },
+    {
+      "id": "yanban.literature.review-framework",
+      "name": "文献综述框架服务",
+      "tags": [
+        "文献综述",
+        "研究脉络",
+        "开题辅助",
+        "科研写作"
+      ],
+      "version": "1.0.0",
+      "examples": [
+        "帮我整理『多智能体协议互操作』方向的综述框架，用于学位论文相关工作章节",
+        "我要写一篇RAG+知识图谱的开题报告，帮我梳理研究脉络和空白点",
+        "给出近三年『智能体可信身份认证』方向的综述提纲，按技术路线分组"
+      ],
+      "inputModes": [
+        "text/plain"
+      ],
+      "description": "针对给定研究主题，基于检索结果生成文献综述框架：研究脉络分期、主要技术路线对比、代表性工作分组、研究空白与未来方向建议；输出 Markdown 结构的综述提纲，可直接用于论文相关工作章节的写作底稿。\n【输入要求】\n必填：研究主题。\n可选：综述用途（学位论文/期刊论文/开题报告）、目标章节篇幅、侧重维度（方法对比/发展脉络/应用场景）。\n当缺少必填项时返回 Task.state=\"awaiting-input\"，提示补充研究主题。",
+      "outputModes": [
+        "text/markdown"
+      ]
+    }
+  ],
+  "version": "1.5.1",
+  "provider": {
+    "url": "",
+    "license": "",
+    "department": "",
+    "organization": "研伴科研协作团队"
+  },
+  "endPoints": [
+    {
+      "url": "https://47.95.252.83:8443/rpc",
+      "security": [
+        {
+          "mtls": []
+        }
+      ],
+      "transport": "JSONRPC"
+    },
+    {
+      "url": "amqps://wt.ioa.pub:5671/acps?inbox=inbox_1.2.156.3088.1.BUPT.BNN2UD.V1R7FH.U8O0NE.05BB",
+      "security": [
+        {
+          "mtls": []
+        }
+      ],
+      "transport": "AMQP"
+    }
+  ],
+  "description": "研伴科研协作智能体团队的文献检索 Partner：面向研究生和科研人员，根据研究主题、关键词、时间范围与学术数据库范围检索中英文学术文献，输出结构化文献清单（题名/作者/年份/来源/摘要/DOI）并按相关度组织；支持生成研究主题的文献综述框架与研究方向脉络梳理。本智能体是「研伴」多智能体科研协作系统的成员之一，通过 AIP 协议与主控 Leader 及其他科研 Partner（实验设计、数据分析、论文写作、模拟审稿）协同完成科研任务。",
+  "capabilities": {
+    "streaming": false,
+    "messageQueue": [
+      "rabbitmq:>=4.2"
+    ],
+    "notification": false
+  },
+  "protocolVersion": "02.02",
+  "securitySchemes": {
+    "mtls": {
+      "type": "mutualTLS",
+      "description": "智能体间mTLS双向认证"
+    }
+  },
+  "lastModifiedTime": "2026-10-07T10:48:39.352101+08:00",
+  "defaultInputModes": [
+    "text/plain",
+    "application/json"
+  ],
+  "defaultOutputModes": [
+    "text/plain",
+    "text/markdown",
+    "application/json"
+  ]
+}

@@ -1,0 +1,25 @@
+# 万桥互操作基准专用注册表（端口全部 ≥8060，避开在役系统 8021-8041）
+# v0.2：stdio（研伴演示）+ streamable-http（httpdemo）+ a2a（上游智能体 8070）三种传输齐备
+
+[[server]]
+ns = "yanban"
+transport = "stdio"
+command = "python"
+args = ["demo_mcp_server.py"]
+description = "研伴科研工具（演示）"
+
+[[server]]
+ns = "httpdemo"
+transport = "http"
+url = "http://127.0.0.1:8062/mcp"
+description = "streamable-http 传输验证上游（基准栈 8062）"
+
+# E 组：上游 A2A Agent（第二实例 8070 扮远端智能体，配置见 bench_config_upstream.toml）
+[[server]]
+ns = "remote"
+transport = "a2a"
+url = "http://127.0.0.1:8070"
+description = "上游 A2A Agent（基准级联回环远端）"
+
+[gateway]
+probe_interval_seconds = 30

@@ -1,0 +1,71 @@
+{
+  "aic": "1.2.156.3088.1.1.YNBAN1.WRT001.1.0000",
+  "active": true,
+  "lastModifiedTime": "2026-09-04T15:24:10.997814+00:00",
+  "protocolVersion": "02.02",
+  "name": "研伴·论文写作智能体",
+  "description": "研伴科研协作团队的论文写作 Partner：把要点列表扩写为学术语体段落，逻辑连贯、术语准确，引用位置以 [作者, 年份] 占位，并建议该段落在论文中的位置。缺要点时返回 awaiting-input。",
+  "version": "1.0.0",
+  "provider": {
+    "organization": "研伴科研协作团队",
+    "department": "",
+    "url": "",
+    "license": ""
+  },
+  "securitySchemes": {
+    "mtls": {
+      "type": "mutualTLS",
+      "description": "智能体间mTLS双向认证"
+    }
+  },
+  "endPoints": [
+    {
+      "url": "amqps://wt.ioa.pub:5671/acps?inbox=inbox_1.2.156.3088.1.1.YNBAN1.WRT001.1.0000",
+      "transport": "AMQP",
+      "security": [
+        {
+          "mtls": []
+        }
+      ]
+    }
+  ],
+  "capabilities": {
+    "streaming": false,
+    "notification": false,
+    "messageQueue": [
+      "rabbitmq:>=4.2"
+    ]
+  },
+  "defaultInputModes": [
+    "text/plain",
+    "application/json"
+  ],
+  "defaultOutputModes": [
+    "text/plain",
+    "text/markdown",
+    "application/json"
+  ],
+  "skills": [
+    {
+      "id": "yanban.writing.paragraph",
+      "name": "学术段落写作服务",
+      "description": "输入写作要点（≥15 字），输出学术语体段落（≤500 字）+建议章节位置+引用占位。\n【输入要求】\n必填：要点列表。\n可选：目标章节、语体要求。\n当缺少必填项时返回 Task.state=\"awaiting-input\"。",
+      "tags": [
+        "论文写作",
+        "学术语体",
+        "科研写作"
+      ],
+      "examples": [
+        "写相关工作段落：要点1 MCP统一工具接入；要点2 A2A智能体任务委派；要点3 二者互补需桥接"
+      ],
+      "version": "1.0.0",
+      "inputModes": [
+        "text/plain"
+      ],
+      "outputModes": [
+        "text/plain",
+        "text/markdown"
+      ]
+    }
+  ]
+}

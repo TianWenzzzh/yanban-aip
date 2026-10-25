@@ -1,0 +1,72 @@
+{
+  "aic": "1.2.156.3088.1.1.YNBAN1.EXP001.1.0000",
+  "active": true,
+  "lastModifiedTime": "2026-09-04T15:24:10.995946+00:00",
+  "protocolVersion": "02.02",
+  "name": "研伴·实验设计智能体",
+  "description": "研伴科研协作团队的实验设计 Partner：根据研究问题与数据条件生成结构化实验方案（研究假设 H1/H0、变量设计表、对照组设置、评估指标与计算方式、样本量与统计功效、风险与缓解）。通过 AIP 协议与研伴 Leader 及其他科研 Partner 协同。缺研究问题描述时返回 awaiting-input。",
+  "version": "1.0.0",
+  "provider": {
+    "organization": "研伴科研协作团队",
+    "department": "",
+    "url": "",
+    "license": ""
+  },
+  "securitySchemes": {
+    "mtls": {
+      "type": "mutualTLS",
+      "description": "智能体间mTLS双向认证"
+    }
+  },
+  "endPoints": [
+    {
+      "url": "amqps://wt.ioa.pub:5671/acps?inbox=inbox_1.2.156.3088.1.1.YNBAN1.EXP001.1.0000",
+      "transport": "AMQP",
+      "security": [
+        {
+          "mtls": []
+        }
+      ]
+    }
+  ],
+  "capabilities": {
+    "streaming": false,
+    "notification": false,
+    "messageQueue": [
+      "rabbitmq:>=4.2"
+    ]
+  },
+  "defaultInputModes": [
+    "text/plain",
+    "application/json"
+  ],
+  "defaultOutputModes": [
+    "text/plain",
+    "text/markdown",
+    "application/json"
+  ],
+  "skills": [
+    {
+      "id": "yanban.experiment.design",
+      "name": "实验方案设计服务",
+      "description": "输入研究问题与可用数据条件，输出定制化实验方案：假设、变量设计（自变量/因变量/控制变量）、分组对照、主/次评估指标及计算方式、样本量说明、风险缓解。\n【输入要求】\n必填：研究问题+数据条件（合计不少于 12 字）。\n可选：指标偏好、约束条件。\n当缺少必填项时返回 Task.state=\"awaiting-input\"。",
+      "tags": [
+        "实验设计",
+        "对照实验",
+        "评估指标",
+        "科研"
+      ],
+      "examples": [
+        "对比 RAG 与微调在医疗问答的准确率，有 1000 条标注数据，请设计实验方案"
+      ],
+      "version": "1.0.0",
+      "inputModes": [
+        "text/plain"
+      ],
+      "outputModes": [
+        "text/plain",
+        "text/markdown"
+      ]
+    }
+  ]
+}
