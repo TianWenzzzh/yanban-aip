@@ -19,6 +19,21 @@
 - `acps-sdk` 作为依赖安装使用，**未修改上游源码**，本仓库不重复分发上游代码。
 - 本仓库的改动集中在上游未覆盖的三层：协议翻译层（MCP↔AIP）、科研任务编排层、质量闭环与评估层。
 
+## 对 AIP 开源社区的贡献
+
+本项目没有直接改动上游仓库代码，而是把在实战中遇到的问题整理成可复现的用例，向 [AIP-PUB/ACPs-community](https://github.com/AIP-PUB/ACPs-community) 提交问题反馈与补丁 PR，由社区评审决定是否合入。以下链接均可公开核验：
+
+| 类型 | 内容 | 链接 |
+|---|---|---|
+| 文档 PR | 让 `agent-development.md` 的最小 Leader / Partner 示例在 SDK v2.2.0 下可直接运行（identity binding 开关、AIC 10 段格式） | [PR #29](https://github.com/AIP-PUB/ACPs-community/pull/29) |
+| 测试 PR | AMP `MetricsEmitter` 写入失败用例改用平台无关的路径构造，修复 Windows 上断言失败 | [PR #30](https://github.com/AIP-PUB/ACPs-community/pull/30) |
+| 脚本 PR | 修复 Git Bash 下 `dev-cert.sh` 的 MSYS 参数改写问题，并让 openssl 失败不再静默 | [PR #31](https://github.com/AIP-PUB/ACPs-community/pull/31) |
+| Issue | [Docs] 最小示例与 SDK v2.2.0 不兼容（identity binding / AIC 格式） | [#24](https://github.com/AIP-PUB/ACPs-community/issues/24) |
+| Issue | [Bug] `dev-cert.sh` 在 Git Bash 下 openssl `-subj` 被 MSYS 路径转换破坏 | [#25](https://github.com/AIP-PUB/ACPs-community/issues/25) |
+| Issue | [Bug] AMP 测试在 Windows 上失败（`/readonly_nonexistent_dir` 不是有效故障路径） | [#26](https://github.com/AIP-PUB/ACPs-community/issues/26) |
+
+三个补丁均先在 Windows 11 / Python 3.14.6 / acps-sdk v2.2.0 上复现原始失败，再验证修复后的通过结果，复现命令与前后对比数据见各 PR 描述。其中 #24 一条还附了对我们原报告表述的自我更正（AIC 10 段校验只在开启身份绑定时生效）。
+
 ## 快速开始
 
 ```bash
